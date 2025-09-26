@@ -17,10 +17,12 @@
     }
 
     .gameWrapper {
-      position: relative;
-      width: 400px;
-      height: 700px;
-    }
+ 	 position: relative;
+ 	 height: 95vh; /* fill 95% of the phone height */
+  	aspect-ratio: 400 / 700;
+ 	 max-height: 700px; /* optional max on desktop */
+ 	 width: auto; /* width will auto-scale */
+	}
 
     canvas, .overlay, #gameOverScreen {
       position: absolute;
