@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Langit–Lupa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Pixelify Sans', sans-serif;
+      background: #aed581;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .gameWrapper {
+      position: relative;
+      width: 400px;
+      height: 700px;
+    }
+
+    canvas, .overlay, #gameOverScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 700px;
+      border-radius: 10px;
+    }
+
+    canvas {
+      border: 3px solid #333;
+      border-radius: 10px;
+      background: #f0f0f0;
+      image-rendering: pixelated;
+    }
+
+    .overlay {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url("background.png") no-repeat center center / cover;
+      color: black;
+      flex-direction: column;
+      font-size: 20px;
+      font-family: 'Pixelify Sans', sans-serif;
+      border: 3px solid #333;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2ecc71;
+      color: white;
+      font-size: 18px;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      font-size: 16px;
+      font-family: 'Pixelify Sans', sans-serif;
+	  border-radius: 12px;
+    }
+
+	 .gameContainer {
+	  display: flex;
+	  align-items: center;
+	  gap: 20px; /* spacing between scoreboard, canvas, and pause */
+	}
+
+	#scoreboard {
+	  position: absolute;
+	  top: 10px;
+	  left: 10px;
+	  min-width: 140px;
+	  background: rgba(0,0,0,0.7);
+	  color: white;
+	  padding: 12px 16px;
+	  border-radius: 12px;
+	  font-size: 14px;
+	  text-align: left;
+	  display: none;
+	  z-index: 20;
+	}
+
+	#pauseBtn {
+	  position: absolute;
+	  top: 10px;
+	  right: 10px;
+	  background: #e67e22;
+	  padding: 12px 20px;
+	  border-radius: 12px;
+	  font-size: 16px;
+	  color: white;
+	  border: none;
+	  cursor: pointer;
+	  display: none;
+	  z-index: 20;
+	}
+
+	#countdownOverlay {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  width: 405px;
+	  height: 705px;
+	  display: none;
+	  justify-content: center;
+	  align-items: center;
+	  font-size: 72px;
+	  font-weight: bold;
+	  color: #fff;
+	  background: rgba(0, 0, 0, 0.85);
+	  border-radius: 10px;
+	  z-index: 100;
+	  pointer-events: none;
+	  box-sizing: border-box;
+	  padding: 0; /* Ensure no internal space */
+	}
+
+    #gameOverScreen {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      pointer-events: all;
+      background: url("background.png") no-repeat center center / cover;
+      border: 3px solid #333;
+    }
+
+    #gameOverScreen .gameOverContainer {
+      width: 220px;
+      background: rgba(0,0,0,0.8);
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+<div class="gameContainer">
+  <!-- Game Wrapper (center) -->
+  <div class="gameWrapper">
+    <!-- Canvas -->
+    <canvas id="gameCanvas" width="400" height="700"></canvas>
+
+    <!-- Countdown -->
+    <div id="countdownOverlay">3</div>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="overlay">
+      <h1 class="pixelify-sans-unique">Langit–Lupa</h1>
+      <button onclick="showModeSelect()">Play</button>
+    </div>
+
+    <!-- Mode Select -->
+    <div id="modeScreen" class="overlay" style="display:none;">
+      <h2 class="pixelify-sans-unique">Select Mode</h2>
+      <button onclick="setupGame(1)">1 Player</button>
+      <button onclick="setupGame(2)">2 Players</button>
+      <div id="nameInputs"></div>
+      <button id="startBtn" onclick="startCountdown()" style="display:none;">Start</button>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOverScreen">
+      <div class="gameOverContainer">
+        <h2 id="gameOverMessage" class="pixelify-sans-unique">Game Over</h2>
+        <p>Press <b>R</b> to Play Again</p>
+        <p>Press <b>N</b> for New Player</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scoreboard (above-left outside canvas) -->
+  <div id="scoreboard"></div>
+
+  <!-- Pause Button (above-right outside canvas) -->
+  <button id="pauseBtn" onclick="togglePause()">Pause (P)</button>
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+ctx.font = "12px 'Pixelify Sans'";
+ctx.textAlign = "left";
+ctx.imageSmoothingEnabled = false;
+
+const PLAYER_FRAMES = 24;
+const TAGGER_FRAMES = 24;
+const STONE_FRAMES = 16;
+const SCALE = 1.5;
+const SAFE_ZONE = { x: 40, y: 80, width: canvas.width - 80, height: canvas.height - 120 };
+
+const playerImg = new Image(); playerImg.src = "player.png";
+const taggerImg = new Image(); taggerImg.src = "tagger.png";
+const stoneImg = new Image();  stoneImg.src = "stone.png";
+const bgImg = new Image();     bgImg.src = "place.png";
+
+let players = [];
+let npc = null;
+let gameRunning = false;
+let paused = false;
+let mode = 1;
+let timeSurvived = 0;
+let lastMode = 1;
+let lastNames = [];
+let playerMoved = false;
+let platformTimer = 0;
+let platformInterval = 600;
+let platformCountdown = platformInterval; 
+const scoreboard = document.getElementById("scoreboard");
+let platforms = [];
+
+// --- Platform Randomization ---
+function randomizePlatforms() {
+  platforms = [];
+  const maxAttempts = 100;
+  for (let i = 0; i < 5; i++) {
+    let newPlat = null;
+    let safe = false;
+    let attempts = 0;
+    while (!safe && attempts < maxAttempts) {
+      newPlat = {
+        x: SAFE_ZONE.x + Math.floor(Math.random() * (SAFE_ZONE.width - 80)),
+        y: SAFE_ZONE.y + Math.floor(Math.random() * (SAFE_ZONE.height - 40)),
+        w: 80, h: 40,
+        frame: Math.floor(Math.random() * STONE_FRAMES)
+      };
+      safe = platforms.every(pl =>
+        Math.abs(pl.x - newPlat.x) > 60 &&
+        Math.abs(pl.y - newPlat.y) > 60
+      );
+      attempts++;
+    }
+    if (newPlat) platforms.push(newPlat);
+  }
+}
+
+// --- UI Functions ---
+function showModeSelect() {
+  document.getElementById("homeScreen").style.display = "none";
+  document.getElementById("modeScreen").style.display = "flex";
+}
+
+function setupGame(numPlayers) {
+  mode = numPlayers;
+  lastMode = numPlayers;
+  const container = document.getElementById("nameInputs");
+  container.innerHTML = "";
+  let startBtn = document.getElementById("startBtn");
+  startBtn.style.display = "block";
+
+  if (numPlayers === 1) {
+    container.innerHTML = `<div>Player Name: <input type="text" id="player1Name" placeholder="Player"></div>`;
+  } else {
+    container.innerHTML = `
+      <div>Player 1 Name: <input type="text" id="player1Name" placeholder="Player1"></div>
+      <div>Player 2 Name: <input type="text" id="player2Name" placeholder="Player2"></div>
+    `;
+  }
+}
+
+function startCountdown() {
+  const overlay = document.getElementById("countdownOverlay");
+  let count = 3;
+  overlay.textContent = count;
+  overlay.style.display = "flex";
+  const interval = setInterval(() => {
+    count--;
+    if(count === 0) overlay.textContent = "Go!";
+    else if(count < 0) { overlay.style.display = "none"; clearInterval(interval); startGame(); }
+    else overlay.textContent = count;
+  }, 1000);
+}
+
+// --- Collision Detection (Exact Sprite) ---
+function checkCollision(a, b, isTagger) {
+  const aW = (isTagger ? taggerImg.width / TAGGER_FRAMES : playerImg.width / PLAYER_FRAMES) * SCALE;
+  const aH = (isTagger ? taggerImg.height : playerImg.height) * SCALE;
+  const bW = (b.isTaya ? taggerImg.width / TAGGER_FRAMES : playerImg.width / PLAYER_FRAMES) * SCALE;
+  const bH = (b.isTaya ? taggerImg.height : playerImg.height) * SCALE;
+
+  return a.x < b.x + bW &&
+         a.x + aW > b.x &&
+         a.y < b.y + bH &&
+         a.y + aH > b.y;
+}
+
+// --- Game Start ---
+function startGame() {
+  players = [];
+  npc = null;
+  timeSurvived = 0;
+  paused = false;
+  playerMoved = false;
+  platformTimer = 0;
+  platformInterval = 600;
+  platformCountdown = platformInterval;
+  randomizePlatforms();
+  document.getElementById("pauseBtn").style.display = "block";
+  document.getElementById("gameOverScreen").style.display = "none";
+
+  if (mode === 1) {
+    let name1 = document.getElementById("player1Name").value || "Player";
+    players.push({ name: name1, x: 150, y: 570, isTaya: false, score: 0, frame: 0, moving: false });
+    npc = { x: 250, y: 570, isTaya: true, frame: 0 };
+    lastNames = [name1];
+  } else {
+    let name1 = document.getElementById("player1Name").value || "Player1";
+    let name2 = document.getElementById("player2Name").value || "Player2";
+    players.push({ name: name1, x: 120, y: 570, isTaya: false, score: 0, frame: 0, moving: false, survived: 0 });
+    players.push({ name: name2, x: 260, y: 570, isTaya: true, score: 0, frame: 0, moving: false, survived: 0 });
+    lastNames = [name1, name2];
+  }
+
+  document.getElementById("modeScreen").style.display = "none";
+  scoreboard.style.display = "block";
+  gameRunning = true;
+  requestAnimationFrame(gameLoop);
+}
+
+// --- Input ---
+const keys = {};
+const speed = 3;
+document.addEventListener("keydown", e => {
+  keys[e.code] = true;
+  if (!gameRunning && document.getElementById("gameOverScreen").style.display === "flex") {
+    if (e.code === "KeyR") replayGame();
+    if (e.code === "KeyN") newPlayer();
+  }
+  if (e.code === "KeyP" && gameRunning) togglePause();
+  if (mode === 2 && e.code === "KeyE") {
+  const winner = players[0].survived > players[1].survived ? players[0] : players[1];
+  gameOver("Game ended by players.", winner.name);
+}
+});
+document.addEventListener("keyup", e => keys[e.code] = false);
+
+// --- Movement ---
+function movePlayers() {
+  players.forEach(p => {
+    p.moving = false;
+    if (p === players[0]) {
+      if (keys["KeyA"]) { p.x -= speed; p.moving = true; }
+      if (keys["KeyD"]) { p.x += speed; p.moving = true; }
+      if (keys["KeyW"]) { p.y -= speed; p.moving = true; }
+      if (keys["KeyS"]) { p.y += speed; p.moving = true; }
+    }
+    if (mode === 2 && p === players[1]) {
+      if (keys["ArrowLeft"]) { p.x -= speed; p.moving = true; }
+      if (keys["ArrowRight"]) { p.x += speed; p.moving = true; }
+      if (keys["ArrowUp"]) { p.y -= speed; p.moving = true; }
+      if (keys["ArrowDown"]) { p.y += speed; p.moving = true; }
+    }
+
+    const frameW = playerImg.width / PLAYER_FRAMES;
+    const frameH = playerImg.height;
+    if (p.x < SAFE_ZONE.x) p.x = SAFE_ZONE.x;
+    if (p.y < SAFE_ZONE.y) p.y = SAFE_ZONE.y;
+    if (p.x + frameW * SCALE > SAFE_ZONE.x + SAFE_ZONE.width) p.x = SAFE_ZONE.x + SAFE_ZONE.width - frameW * SCALE;
+    if (p.y + frameH * SCALE > SAFE_ZONE.y + SAFE_ZONE.height) p.y = SAFE_ZONE.y + SAFE_ZONE.height - frameH * SCALE;
+  });
+}
+
+// --- Platform Check ---
+function isOnPlatform(p) {
+  const frameW = playerImg.width / PLAYER_FRAMES;
+  const frameH = playerImg.height;
+  return platforms.some(pl =>
+    p.x + frameW * SCALE > pl.x && p.x < pl.x + pl.w &&
+    p.y + frameH * SCALE > pl.y && p.y + frameH * SCALE < pl.y + pl.h
+  );
+}
+
+// --- NPC ---
+function update() {
+  movePlayers();
+  players.forEach(p => { if (p.moving) p.frame = (p.frame + 0.25) % PLAYER_FRAMES; else p.frame = 0; });
+
+  if (mode === 1 && npc) {
+    let p = players[0];
+    playerMoved = p.moving || playerMoved;
+    if (!isOnPlatform(p)) {
+      // NPC chases player
+      if (p.x < npc.x) npc.x -= 2;
+      if (p.x > npc.x) npc.x += 2;
+      if (p.y < npc.y) npc.y -= 2;
+      if (p.y > npc.y) npc.y += 2;
+      npc.frame = (npc.frame + 0.25) % TAGGER_FRAMES;
+
+      if (checkCollision(p, npc, false)) gameOver(`${p.name} got tagged! Survived ${(timeSurvived/60).toFixed(1)} seconds.`);
+    }
+    timeSurvived++;
+  } else if (mode === 2) {
+    let p1 = players[0], p2 = players[1];
+    if (!p1.isTaya) p1.survived++;
+    if (!p2.isTaya) p2.survived++;
+
+    if (checkCollision(p1,p2,false)) {
+      if (p1.isTaya && !isOnPlatform(p2)) { p1.isTaya = false; p2.isTaya = true; }
+      else if (p2.isTaya && !isOnPlatform(p1)) { p2.isTaya = false; p1.isTaya = true; }
+    }
+  }
+
+  platformTimer++;
+  platformCountdown = Math.max(0, platformInterval - platformTimer);
+  if (platformTimer >= platformInterval) { 
+    randomizePlatforms();
+    platformTimer = 0;
+    platformInterval = Math.max(120, platformInterval - 60);
+    platformCountdown = platformInterval;
+  }
+}
+
+async function gameOver(msg, winnerName = null) {
+  gameRunning = false;
+  document.getElementById("pauseBtn").style.display = "none";
+
+  // --- API Send player data to server ---
+  try {
+    if (mode === 1) {
+      await fetch("http://localhost:3000/players", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: players[0].name,
+          survived: +(timeSurvived / 60).toFixed(1),
+          mode
+        })
+      });
+    } else if (mode === 2) {
+      for (const p of players) {
+        await fetch("http://localhost:3000/players", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: p.name,
+            survived: +(p.survived / 60).toFixed(1),
+            mode
+          })
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Failed to send player data:", err);
+  }
+
+  // --- Show Game Over Screen ---
+  const container = document.getElementById("gameOverScreen").querySelector(".gameOverContainer");
+  let html = `<h2 id="gameOverMessage" class="pixelify-sans-unique">Game Over</h2>`;
+  html += `<p>${msg}</p>`;
+  if (winnerName) html += `<p>Winner: ${winnerName}</p>`;
+  container.innerHTML = html;
+  document.getElementById("gameOverScreen").style.display = "flex";
+
+  // --- Fetch and log players & top players ---
+  try {
+    const [allRes, topRes, modeRes, topModeRes] = await Promise.all([
+      fetch("http://localhost:3000/players"),
+      fetch("http://localhost:3000/top"),
+      fetch(`http://localhost:3000/players/${mode}`),
+      fetch(`http://localhost:3000/top/${mode}`)
+    ]);
+
+    const allPlayers = await allRes.json();
+    const topPlayers = await topRes.json();
+    const modePlayers = await modeRes.json();
+    const topModePlayers = await topModeRes.json();
+
+    console.log("All Players:", allPlayers);
+    console.log("Top Players:", topPlayers);
+    console.log(`Players in Mode ${mode}:`, modePlayers);
+    console.log(`Top in Mode ${mode}:`, topModePlayers);
+  } catch (err) {
+    console.error("Failed to fetch players from server:", err);
+  }
+
+  // --- Instructions remain ---
+  container.innerHTML += '<p>Press <b>R</b> to Replay</p><p>Press <b>N</b> for New Player</p>';
+}
+
+// --- Drawing ---
+function drawSprite(img, frame, frames, dx, dy, scale) {
+  const frameW = img.width / frames;
+  const frameH = img.height;
+  ctx.drawImage(img,
+    Math.floor(frame) * frameW, 0, frameW, frameH,
+    dx, dy, frameW * scale, frameH * scale
+  );
+}
+
+CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+  if (w < 2*r) r = w/2;
+  if (h < 2*r) r = h/2;
+  this.beginPath();
+  this.moveTo(x+r, y);
+  this.arcTo(x+w, y, x+w, y+h, r);
+  this.arcTo(x+w, y+h, x, y+h, r);
+  this.arcTo(x, y+h, x, y, r);
+  this.arcTo(x, y, x+w, y, r);
+  this.closePath();
+  return this;
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+  // Platforms
+  platforms.forEach(pl => {
+    const cols = 4;
+    const frameW = stoneImg.width / cols;
+    const frameH = stoneImg.height / cols;
+    const sx = (pl.frame % cols) * frameW;
+    const sy = Math.floor(pl.frame / cols) * frameH;
+    ctx.drawImage(stoneImg, sx, sy, frameW, frameH, pl.x, pl.y, pl.w, pl.h);
+  });
+
+  // --- Platform Countdown Bar ---
+  const barX = SAFE_ZONE.x;
+  const barY = SAFE_ZONE.y - 20;
+  const barWidth = SAFE_ZONE.width;
+  const barHeight = 12;
+  const radius = 6;
+  const remaining = Math.max(0, platformCountdown / platformInterval);
+
+  const gradient = ctx.createLinearGradient(barX, barY, barX + barWidth, barY);
+  gradient.addColorStop(0, "red");
+  gradient.addColorStop(0.5, "yellow");
+  gradient.addColorStop(1, "green");
+
+  ctx.fillStyle = "#333";
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, barWidth, barHeight, radius);
+  ctx.fill();
+
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, barWidth * remaining, barHeight, radius);
+  ctx.fill();
+
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, barWidth, barHeight, radius);
+  ctx.stroke();
+
+  // Players
+  players.forEach(p => {
+    drawSprite(p.isTaya ? taggerImg : playerImg, p.frame, TAGGER_FRAMES, p.x, p.y, SCALE);
+    ctx.fillStyle = p.isTaya ? "red" : "blue";
+    ctx.fillText(p.name, p.x, p.y - 8);
+  });
+
+  if (npc) {
+    drawSprite(taggerImg, npc.frame, TAGGER_FRAMES, npc.x, npc.y, SCALE);
+    ctx.fillStyle = "red";
+    ctx.fillText("Taya", npc.x, npc.y - 8);
+  }
+
+  // Scoreboard
+  let html = "<b>Scoreboard</b><br>";
+  if (mode === 1) html += `${players[0].name}: Survived ${(timeSurvived/60).toFixed(1)} seconds`;
+  else {
+    html += "Press E to end the game<br>";
+    players.forEach(p => html += `${p.name}: ${(p.survived/60).toFixed(1)}s ${p.isTaya ? "(Taya)" : ""}<br>`);
+    let winner = players.reduce((a,b)=> a.survived > b.survived ? a : b);
+    html += `<b>Winner so far: ${winner.name}</b>`;
+  }
+  scoreboard.innerHTML = html;
+}
+
+// --- Main Loop ---
+function gameLoop() {
+  if (!gameRunning || paused) return;
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+// --- Replay & New Player ---
+function replayGame() {
+  mode = lastMode;
+  setupGame(mode);
+  if (mode === 1) document.getElementById("player1Name").value = lastNames[0];
+  else { document.getElementById("player1Name").value = lastNames[0]; document.getElementById("player2Name").value = lastNames[1]; }
+  startGame();
+}
+
+function newPlayer() {
+  document.getElementById("gameOverScreen").style.display = "none";
+  showModeSelect();
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById("pauseBtn").textContent = paused ? "Resume (P)" : "Pause (P)";
+  if (!paused) requestAnimationFrame(gameLoop);
+}
+
+const startBtn = document.getElementById("startBtn");
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && startBtn.style.display !== "none") {
+      startCountdown();
+    }
+  });
+  
+</script>
+</body>
+</html>
