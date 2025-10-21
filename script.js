@@ -746,42 +746,6 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("keyup", (e) => (keys[e.code] = false));
 
-  // Button controls
-  function addButtonListeners(btn, controlKey) {
-    if (!btn) return;
-
-    btn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = true;
-      btn.classList.add("active");
-    });
-
-    btn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = false;
-      btn.classList.remove("active");
-    });
-
-    btn.addEventListener("touchcancel", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = false;
-      btn.classList.remove("active");
-    });
-  }
-
-  addButtonListeners(jumpBtn, "jump");
-  addButtonListeners(dashLeftBtn, "dashLeft");
-  addButtonListeners(dashRightBtn, "dashRight");
-}
-
-// Show/hide mobile controls
-function updateControlsVisibility() {
-  const mobileControls = document.getElementById("mobileControls");
-  if (mobileControls) {
-    mobileControls.style.display = gameRunning && isMobile ? "block" : "none";
-  }
-}
-
 // Helper functions
 function getPlayerBodyRect(p) {
   return {
