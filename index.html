@@ -7,28 +7,6 @@
 <meta name="description" content="Play Langit-Lupa, a classic Filipino tag game reimagined! Jump between platforms, avoid lava, and tag your opponents in this exciting multiplayer game.">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-  <script>
-window.addEventListener("load", () => {
-  const canvas = document.getElementById("gameCanvas");
-  const confettiCanvas = document.getElementById("confettiCanvas");
-  const particleCanvas = document.getElementById("particleCanvas");
-
-  function resizeCanvas() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    [canvas, confettiCanvas, particleCanvas].forEach(c => {
-      c.width = width;
-      c.height = height;
-      c.style.width = width + "px";
-      c.style.height = height + "px";
-    });
-  }
-
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
-});
-</script>
-
 </head>
 <body>
 <div class="stars"></div>
