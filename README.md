@@ -158,4 +158,3 @@ If you want to stop the server, press **Ctrl + C** in your terminal.
 
 ---
 
-Would you like me to follow this up with the **“Option 2 — Online Deployment”** section next (for hosting on Render, Vercel, or Replit)?
