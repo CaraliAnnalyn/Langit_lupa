@@ -34,7 +34,7 @@ const DASH_COOLDOWN = 120;
 
 // Hitbox definitions
 const PLAYER_BODY_HITBOX = { xOffset: 6, yOffset: 8, width: 12, height: 24 };
-const STONE_HITBOX = { xOffset: 2, yOffset: 2, width: 76, height: 36 };
+const STONE_HITBOX = { xOffset: 2, yOffset: 2, width: 50, height: 20 };
 
 // Image preloading system
 const player1Img = new Image();
