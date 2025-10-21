@@ -1391,11 +1391,11 @@ function update() {
       const stoneRect = getStoneRect(platform);
       const feet = getPlayerFeet(p);
 
-      const feetRect = { x: feet.x, y: feet.y - 5, w: feet.w, h: 5 };
+      const feetRect = { x: feet.x, y: feet.y - 1, w: feet.w, h: 1 };
 
       if (rectCollision(feetRect, stoneRect) && p.vy >= 0) {
         if (platform.safe) {
-          p.y = stoneRect.y - 32 * SCALE + PLAYER_BODY_HITBOX.yOffset * SCALE;
+          p.y = stoneRect.y - 20 * SCALE + PLAYER_BODY_HITBOX.yOffset * SCALE;
           p.vy = 0;
           p.onGround = true;
           p.jumpsRemaining = p.maxJumps;
