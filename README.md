@@ -78,4 +78,84 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 - ⚡ **Adjust** Platform Speed (Slow / Normal / Fast)  
 - 🎁 **Set** Power-up Frequency (Rare / Normal / Common)
 
+---
 
+## 🏁 How to Play
+
+1. Launch the game (`index.html`) in your browser.  
+2. Click **Play Game** from the home screen.  
+3. Choose your **Game Mode**.  
+4. Enter player names and pick your colors.  
+5. Tap **Start Game** and wait for the countdown!  
+6. Survive, jump, and tag — may the best player win!
+
+---
+
+## 🛠️ Installation / Setup
+
+### Option 1 — Local Play
+Absolutely ✅ Here’s the **complete, polished “Option 1 — Local Play”** section for your `README.md` — fully written out with clear steps and brief explanations for each command.
+
+You can copy and paste this directly under your **Installation / Setup** heading:
+
+---
+
+### 🖥️ Option 1 — Local Play
+
+Follow these steps to run *Langit–Lupa* locally on your computer:
+
+1. **Clone or download this repository:**
+
+   ```bash
+   git clone https://github.com/CaraliAnnalyn/Langit_lupa.git
+   ```
+
+   > This copies the project files from GitHub to your local machine.
+
+2. **Navigate to the project directory:**
+
+   ```bash
+   cd Langit_lupa
+   ```
+
+   > This ensures all following commands are run inside the project folder.
+
+3. **Install required dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+   > This installs the necessary Node.js packages, including **Express**, which is used to run the game server.
+
+4. **Start the local game server:**
+
+   ```bash
+   node server.js
+   ```
+
+   > This will start your local server and display logs like:
+
+   ```
+   🎮 Langit-Lupa game server running on http://0.0.0.0:5000
+   📱 Mobile controls enabled for touch devices
+   🏆 Achievement system ready
+   ⚡ Performance optimized for 60 FPS
+   ```
+
+5. **Open your browser and play the game:**
+
+   ```
+   http://localhost:5000
+   ```
+
+   > Once the server is running, you can open this link in your browser to start playing.
+
+---
+
+✅ **Tip:**
+If you want to stop the server, press **Ctrl + C** in your terminal.
+
+---
+
+Would you like me to follow this up with the **“Option 2 — Online Deployment”** section next (for hosting on Render, Vercel, or Replit)?
