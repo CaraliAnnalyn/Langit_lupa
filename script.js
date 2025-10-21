@@ -57,8 +57,7 @@ function updateLoadingProgress() {
   if (imagesLoaded === totalImages) {
     setTimeout(() => {
       document.getElementById("loadingScreen").style.display = "none";
-      document.getElementById("homeScreen").style.display = "flex";
-    }, 500);
+      document.getElementById("homeScreen").style.display = "none";
   }
 }
 
