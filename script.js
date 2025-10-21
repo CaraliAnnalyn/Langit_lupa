@@ -1998,7 +1998,22 @@ function togglePause() {
 }
 
 // Initialize
-window.addEventListener("resize", () => {
-  isMobile = window.innerWidth <= 768;
-  updateControlsVisibility();
+window.addEventListener("load", () => {
+  const canvas = document.getElementById("gameCanvas");
+  const confettiCanvas = document.getElementById("confettiCanvas");
+  const particleCanvas = document.getElementById("particleCanvas");
+
+  function resizeCanvas() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    [canvas, confettiCanvas, particleCanvas].forEach(c => {
+      c.width = width;
+      c.height = height;
+      c.style.width = width + "px";
+      c.style.height = height + "px";
+    });
+  }
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
 });
