@@ -18,7 +18,6 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🎮 Langit-Lupa game server running on http://0.0.0.0:${PORT}`);
-  console.log('📱 Mobile controls enabled for touch devices');
   console.log('🏆 Achievement system ready');
   console.log('⚡ Performance optimized for 60 FPS');
 });
