@@ -37,7 +37,7 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 - **Last player standing wins!**
 
 ---
-##🎁 Available Power-Ups
+#🎁 Available Power-Ups
 
 | Power-Up              | Symbol | Effect           | Duration (frames) | Description                                                                     |
 | --------------------- | ------ | ---------------- | ----------------- | ------------------------------------------------------------------------------- |
