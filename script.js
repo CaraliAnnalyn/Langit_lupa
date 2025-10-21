@@ -1327,47 +1327,6 @@ function update() {
   players.forEach((p, idx) => {
     if (!p.isTaya) p.survived++;
 
-    // Handle input based on player index and mobile controls
-    let moveLeft = false,
-      moveRight = false,
-      jump = false,
-      dashLeft = false,
-      dashRight = false;
-
-    if (idx === 0) {
-      if (isMobile && touchControls.joystick.active) {
-        moveLeft = touchControls.joystick.currentX < -0.3;
-        moveRight = touchControls.joystick.currentX > 0.3;
-        jump = touchControls.jump;
-        dashLeft = touchControls.dashLeft;
-        dashRight = touchControls.dashRight;
-        touchControls.jump = false;
-        touchControls.dashLeft = false;
-        touchControls.dashRight = false;
-      } else {
-        moveLeft = keys["KeyA"] || keys["ArrowLeft"];
-        moveRight = keys["KeyD"] || keys["ArrowRight"];
-        jump = keys["KeyW"] || keys["Space"] || keys["ArrowUp"];
-        dashLeft = keys["KeyQ"] || keys["Comma"];
-        dashRight = keys["KeyE"] || keys["Period"];
-      }
-    } else {
-      if (isMobile && !touchControls.joystick.active) {
-        // Player 2 uses keyboard on mobile if available
-        moveLeft = keys["ArrowLeft"];
-        moveRight = keys["ArrowRight"];
-        jump = keys["ArrowUp"];
-        dashLeft = keys["Comma"];
-        dashRight = keys["Period"];
-      } else {
-        moveLeft = keys["ArrowLeft"];
-        moveRight = keys["ArrowRight"];
-        jump = keys["ArrowUp"] || keys["ShiftRight"];
-        dashLeft = keys["Comma"];
-        dashRight = keys["Period"];
-      }
-    }
-
     // Horizontal movement
     const moveSpeed = 3 * p.speedMultiplier;
     if (moveLeft) {
