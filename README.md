@@ -37,16 +37,16 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 - **Last player standing wins!**
 
 ---
+##🎁 Available Power-Ups
 
-## 🧩 Power-up Effects
-
-| Power-up | Effect |
-|-----------|---------|
-| 🪶 Triple Jump | Perform up to 3 jumps in midair |
-| ⚡ Speed | Boost movement speed temporarily |
-| 🧊 Platform Freeze | Stop color changes for a short time |
-| 🛡️ Shield | Protect from one lava touch or tag |
-| 🪞 Shrink | Reduce player size for agility |
+| Power-Up              | Symbol | Effect           | Duration (frames) | Description                                                                     |
+| --------------------- | ------ | ---------------- | ----------------- | ------------------------------------------------------------------------------- |
+| ⚡ **Speed Boost**     | ⚡      | `speed`          | 300               | Increases player movement speed by 1.8× for faster dodging or chasing.          |
+| ★ **Invincibility**   | ★      | `invincible`     | 180               | Player becomes immune to damage and cannot be tagged.                           |
+| ↑ **Triple Jump**     | ↑      | `tripleJump`     | 240               | Allows the player to jump up to three times consecutively.                      |
+| 🛡 **Shield**         | 🛡     | `shield`         | 240               | Absorbs one hit or tag without losing.                                          |
+| ↓ **Shrink**          | ↓      | `shrink`         | 300               | Reduces player size to 60% for easier dodging and fitting through tight spaces. |
+| ❄ **Platform Freeze** | ❄      | `platformFreeze` | 360               | Temporarily freezes all moving platforms, making navigation easier.             |
 
 ---
 
