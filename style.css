@@ -194,6 +194,7 @@ canvas {
 }
 
 .cute-button {
+  margin: 5px;
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   border: none;
   border-radius: 50px;
