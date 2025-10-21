@@ -129,26 +129,6 @@ let POWERUP_SPAWN_INTERVAL = 300;
 const scoreboard = document.getElementById("scoreboard");
 const keys = {};
 
-// Mobile touch controls state
-let touchControls = {
-  joystick: {
-    active: false,
-    startX: 0,
-    startY: 0,
-    currentX: 0,
-    currentY: 0,
-    identifier: null,
-  },
-  jump: false,
-  dashLeft: false,
-  dashRight: false,
-};
-
-let isMobile =
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent,
-  ) || window.innerWidth <= 768;
-
 // Game modes
 let currentGameMode = "classic";
 const GAME_MODES = {
@@ -766,120 +746,6 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("keyup", (e) => (keys[e.code] = false));
 
-// Mobile touch controls
-function setupTouchControls() {
-  const joystickArea = document.getElementById("joystickArea");
-  const joystickBase = document.getElementById("joystickBase");
-  const joystickStick = document.getElementById("joystickStick");
-  const jumpBtn = document.getElementById("touchJump");
-  const dashLeftBtn = document.getElementById("touchDashLeft");
-  const dashRightBtn = document.getElementById("touchDashRight");
-
-  if (!joystickArea) return;
-
-  // Joystick controls
-  joystickArea.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const rect = joystickArea.getBoundingClientRect();
-
-    touchControls.joystick.active = true;
-    touchControls.joystick.startX = rect.left + rect.width / 2;
-    touchControls.joystick.startY = rect.top + rect.height / 2;
-    touchControls.joystick.identifier = touch.identifier;
-
-    joystickBase.style.display = "block";
-    joystickStick.style.display = "block";
-    joystickBase.style.left = touch.clientX - rect.left - 60 + "px";
-    joystickBase.style.top = touch.clientY - rect.top - 60 + "px";
-    joystickStick.style.left = touch.clientX - rect.left - 20 + "px";
-    joystickStick.style.top = touch.clientY - rect.top - 20 + "px";
-
-    touchControls.joystick.startX = touch.clientX;
-    touchControls.joystick.startY = touch.clientY;
-  });
-
-  joystickArea.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    if (!touchControls.joystick.active) return;
-
-    const touch = Array.from(e.touches).find(
-      (t) => t.identifier === touchControls.joystick.identifier,
-    );
-    if (!touch) return;
-
-    const rect = joystickArea.getBoundingClientRect();
-    const maxDist = 50;
-
-    let dx = touch.clientX - touchControls.joystick.startX;
-    let dy = touch.clientY - touchControls.joystick.startY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    if (dist > maxDist) {
-      dx = (dx / dist) * maxDist;
-      dy = (dy / dist) * maxDist;
-    }
-
-    touchControls.joystick.currentX = dx / maxDist;
-    touchControls.joystick.currentY = dy / maxDist;
-
-    joystickStick.style.left =
-      touchControls.joystick.startX - rect.left + dx - 20 + "px";
-    joystickStick.style.top =
-      touchControls.joystick.startY - rect.top + dy - 20 + "px";
-  });
-
-  joystickArea.addEventListener("touchend", (e) => {
-    e.preventDefault();
-    const stillTouching = Array.from(e.touches).some(
-      (t) => t.identifier === touchControls.joystick.identifier,
-    );
-
-    if (!stillTouching) {
-      touchControls.joystick.active = false;
-      touchControls.joystick.currentX = 0;
-      touchControls.joystick.currentY = 0;
-      joystickBase.style.display = "none";
-      joystickStick.style.display = "none";
-    }
-  });
-
-  // Button controls
-  function addButtonListeners(btn, controlKey) {
-    if (!btn) return;
-
-    btn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = true;
-      btn.classList.add("active");
-    });
-
-    btn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = false;
-      btn.classList.remove("active");
-    });
-
-    btn.addEventListener("touchcancel", (e) => {
-      e.preventDefault();
-      touchControls[controlKey] = false;
-      btn.classList.remove("active");
-    });
-  }
-
-  addButtonListeners(jumpBtn, "jump");
-  addButtonListeners(dashLeftBtn, "dashLeft");
-  addButtonListeners(dashRightBtn, "dashRight");
-}
-
-// Show/hide mobile controls
-function updateControlsVisibility() {
-  const mobileControls = document.getElementById("mobileControls");
-  if (mobileControls) {
-    mobileControls.style.display = gameRunning && isMobile ? "block" : "none";
-  }
-}
-
 // Helper functions
 function getPlayerBodyRect(p) {
   return {
@@ -1326,47 +1192,6 @@ function update() {
 
   players.forEach((p, idx) => {
     if (!p.isTaya) p.survived++;
-
-    // Handle input based on player index and mobile controls
-    let moveLeft = false,
-      moveRight = false,
-      jump = false,
-      dashLeft = false,
-      dashRight = false;
-
-    if (idx === 0) {
-      if (isMobile && touchControls.joystick.active) {
-        moveLeft = touchControls.joystick.currentX < -0.3;
-        moveRight = touchControls.joystick.currentX > 0.3;
-        jump = touchControls.jump;
-        dashLeft = touchControls.dashLeft;
-        dashRight = touchControls.dashRight;
-        touchControls.jump = false;
-        touchControls.dashLeft = false;
-        touchControls.dashRight = false;
-      } else {
-        moveLeft = keys["KeyA"] || keys["ArrowLeft"];
-        moveRight = keys["KeyD"] || keys["ArrowRight"];
-        jump = keys["KeyW"] || keys["Space"] || keys["ArrowUp"];
-        dashLeft = keys["KeyQ"] || keys["Comma"];
-        dashRight = keys["KeyE"] || keys["Period"];
-      }
-    } else {
-      if (isMobile && !touchControls.joystick.active) {
-        // Player 2 uses keyboard on mobile if available
-        moveLeft = keys["ArrowLeft"];
-        moveRight = keys["ArrowRight"];
-        jump = keys["ArrowUp"];
-        dashLeft = keys["Comma"];
-        dashRight = keys["Period"];
-      } else {
-        moveLeft = keys["ArrowLeft"];
-        moveRight = keys["ArrowRight"];
-        jump = keys["ArrowUp"] || keys["ShiftRight"];
-        dashLeft = keys["Comma"];
-        dashRight = keys["Period"];
-      }
-    }
 
     // Horizontal movement
     const moveSpeed = 3 * p.speedMultiplier;
@@ -1996,9 +1821,3 @@ function togglePause() {
     : "⏸ Pause (P)";
   if (!paused && gameRunning) requestAnimationFrame(gameLoop);
 }
-
-// Initialize
-window.addEventListener("resize", () => {
-  isMobile = window.innerWidth <= 768;
-  updateControlsVisibility();
-});
