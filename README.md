@@ -10,7 +10,7 @@ Players jump across platforms, avoid lava, and try to tag each other while stayi
 > “Langit–Lupa” is a traditional Filipino game of tag where players are **safe** from being tagged if they stand on an elevated surface (“**Langit**” or heaven),  
 > while the player who is “it” remains on the ground (“**Lupa**” or earth).
 
-This web version combines **nostalgia** with **modern design**, featuring pixel-style graphics, smooth animations, and support for both keyboard and mobile controls.
+This web version combines **nostalgia** with **modern design**, featuring pixel-style graphics, and smooth animations.
 
 ---
 
@@ -23,7 +23,6 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 - 🎮 **4 Game Modes:** Classic, Time Attack, Score Race, Survival
 - 🏆 **Leaderboard & Achievements system**
 - 🎵 **Sound and music toggle**
-- 📱 **Mobile touch controls**
 - ⚙️ **Node.js Express server for hosting**
 
 ---
@@ -66,10 +65,6 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 | Jump | Shift |
 | Dash Left / Right | , / . |
 
-### Mobile Controls
-- On-screen **joystick** for movement  
-- **↑** for jump, **← →** for dash  
-
 ---
 
 ## ⚙️ Settings Menu
@@ -81,24 +76,15 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 ---
 
 ## 🏁 How to Play
-
-1. Launch the game (`index.html`) in your browser.  
-2. Click **Play Game** from the home screen.  
-3. Choose your **Game Mode**.  
-4. Enter player names and pick your colors.  
-5. Tap **Start Game** and wait for the countdown!  
-6. Survive, jump, and tag — may the best player win!
+1. Click **Play Game** from the home screen.  
+2. Choose your **Game Mode**.  
+3. Enter player names and pick your colors.  
+4. Tap **Start Game** and wait for the countdown!  
+5. Survive, jump, and tag — may the best player win!
 
 ---
 
 ## 🛠️ Installation / Setup
-
-### Option 1 — Local Play
-Absolutely ✅ Here’s the **complete, polished “Option 1 — Local Play”** section for your `README.md` — fully written out with clear steps and brief explanations for each command.
-
-You can copy and paste this directly under your **Installation / Setup** heading:
-
----
 
 ### 🖥️ Option 1 — Local Play
 
@@ -138,7 +124,6 @@ Follow these steps to run *Langit–Lupa* locally on your computer:
 
    ```
    🎮 Langit-Lupa game server running on http://0.0.0.0:5000
-   📱 Mobile controls enabled for touch devices
    🏆 Achievement system ready
    ⚡ Performance optimized for 60 FPS
    ```
