@@ -129,26 +129,6 @@ let POWERUP_SPAWN_INTERVAL = 300;
 const scoreboard = document.getElementById("scoreboard");
 const keys = {};
 
-// Mobile touch controls state
-let touchControls = {
-  joystick: {
-    active: false,
-    startX: 0,
-    startY: 0,
-    currentX: 0,
-    currentY: 0,
-    identifier: null,
-  },
-  jump: false,
-  dashLeft: false,
-  dashRight: false,
-};
-
-let isMobile =
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent,
-  ) || window.innerWidth <= 768;
-
 // Game modes
 let currentGameMode = "classic";
 const GAME_MODES = {
