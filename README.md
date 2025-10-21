@@ -41,12 +41,12 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 
 | Power-Up              | Symbol | Effect           | Duration (frames) | Description                                                                     |
 | --------------------- | ------ | ---------------- | ----------------- | ------------------------------------------------------------------------------- |
-| ⚡ **Speed Boost**     | ⚡      | `speed`          | 300               | Increases player movement speed by 1.8× for faster dodging or chasing.          |
-| ★ **Invincibility**   | ★      | `invincible`     | 180               | Player becomes immune to damage and cannot be tagged.                           |
-| ↑ **Triple Jump**     | ↑      | `tripleJump`     | 240               | Allows the player to jump up to three times consecutively.                      |
-| 🛡 **Shield**         | 🛡     | `shield`         | 240               | Absorbs one hit or tag without losing.                                          |
-| ↓ **Shrink**          | ↓      | `shrink`         | 300               | Reduces player size to 60% for easier dodging and fitting through tight spaces. |
-| ❄ **Platform Freeze** | ❄      | `platformFreeze` | 360               | Temporarily freezes all moving platforms, making navigation easier.             |
+| **Speed Boost**     | ⚡      | `speed`          | 300               | Increases player movement speed by 1.8× for faster dodging or chasing.          |
+| **Invincibility**   | ★      | `invincible`     | 180               | Player becomes immune to damage and cannot be tagged.                           |
+| **Triple Jump**     | ↑      | `tripleJump`     | 240               | Allows the player to jump up to three times consecutively.                      |
+| **Shield**         | 🛡     | `shield`         | 240               | Absorbs one hit or tag without losing.                                          |
+| **Shrink**          | ↓      | `shrink`         | 300               | Reduces player size to 60% for easier dodging and fitting through tight spaces. |
+| **Platform Freeze** | ❄      | `platformFreeze` | 360               | Temporarily freezes all moving platforms, making navigation easier.             |
 
 ---
 
@@ -78,7 +78,4 @@ This web version combines **nostalgia** with **modern design**, featuring pixel-
 - ⚡ **Adjust** Platform Speed (Slow / Normal / Fast)  
 - 🎁 **Set** Power-up Frequency (Rare / Normal / Common)
 
----
-
-## 🧱 Project Structure
 
