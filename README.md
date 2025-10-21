@@ -158,3 +158,11 @@ If you want to stop the server, press **Ctrl + C** in your terminal.
 
 ---
 
+💡 Inspiration
+
+Langit–Lupa celebrates Filipino childhood culture through modern web development.
+By blending nostalgia, art, and coding, it keeps the spirit of Filipino street games alive in a digital age.
+
+---
+
+# THANK YOU!
