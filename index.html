@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Langit–Lupa | Filipino Tag Game</title>
+<meta name="description" content="Play Langit-Lupa, a classic Filipino tag game reimagined! Jump between platforms, avoid lava, and tag your opponents in this exciting multiplayer game.">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stars"></div>
+<div class="gameContainer">
+  <!-- Left Column: Scoreboard & Achievements -->
+  <div class="left-column">
+    <div id="scoreboard"></div>
+    <!-- Home button during gameplay -->
+    <button id="homeBtn" class="nav-button home-button" onclick="exitToHome()" style="display:none;">
+      <span class="button-icon">🏠</span>
+      <span>Exit to Home</span>
+    </button>
+  </div>
+  
+  <!-- Center Column: Game Canvas -->
+  <div class="gameWrapper">
+    <canvas id="gameCanvas" width="400" height="700"></canvas>
+    <canvas id="confettiCanvas" width="400" height="700"></canvas>
+    <canvas id="particleCanvas" width="400" height="700"></canvas>
+    
+    <div id="countdownOverlay">3</div>
+    <div id="taggerNotice"></div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="overlay">
+      <div id="loadingText">Loading...</div>
+      <div class="loading-bar-container">
+        <div id="loadingProgress" class="loading-bar"></div>
+      </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="overlay" style="display:none;">
+      <div class="stars-overlay"></div>
+      <div class="title-container">
+        <h1 class="game-title">
+          <span class="title-word langit">Langit</span>
+          <span class="title-dash">✦</span>
+          <span class="title-word lupa">Lupa</span>
+        </h1>
+        <div class="title-subtitle">A Filipino Tag Game</div>
+      </div>
+      <button class="cute-button play-btn" onclick="showModeSelect()">
+        <span class="button-icon">▶</span>
+        <span>Play Game</span>
+      </button>
+      <button class="cute-button leaderboard-btn" onclick="showLeaderboard()">
+        <span class="button-icon">🏆</span>
+        <span>Leaderboard</span>
+      </button>
+      <button class="cute-button" onclick="showAchievements()">
+        <span class="button-icon">🎖️</span>
+        <span>Achievements</span>
+      </button>
+      <button class="cute-button settings-btn" onclick="showSettings()">
+        <span class="button-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+      <div class="controls-hint">
+		<h2>🎮 Game Controls</h2>
+        <p>Player 1: <b>WASD</b> + <b>Double W</b> (Double Jump) + <b>Q</b> (Left-Dash) + <b>E</b> (Right-Dash)</p>
+        <p>Player 2: <b>Arrows</b> + <b>Double Arrow Up</b> (Double Jump) + <b>N</b> (Left-Dash) + <b>M</b> (Right-Dash)</p>
+      </div>
+    </div>
+
+    <!-- Mode Selection Screen -->
+    <div id="modeScreen" class="overlay" style="display:none;">
+      <button class="nav-button back-button" onclick="backToHome()">
+        <span class="button-icon">←</span>
+        <span>Back</span>
+      </button>
+      <div class="form-container">
+        <h2 class="screen-title">🎮 Select Game Mode</h2>
+        <div id="modeSelection" class="mode-selection">
+          <div class="mode-option" data-mode="classic">
+            <div class="mode-header">
+              <span class="mode-icon">🏆</span>
+              <span class="mode-name">Classic</span>
+            </div>
+            <p class="mode-description">Survive the longest. Avoid red platforms and tag your opponent!</p>
+          </div>
+          <div class="mode-option" data-mode="timeAttack">
+            <div class="mode-header">
+              <span class="mode-icon">⏱️</span>
+              <span class="mode-name">Time Attack</span>
+            </div>
+            <p class="mode-description">Survive for 60 seconds without getting tagged or touching lava!</p>
+          </div>
+          <div class="mode-option" data-mode="scoreRace">
+            <div class="mode-header">
+              <span class="mode-icon">🏁</span>
+              <span class="mode-name">Score Race</span>
+            </div>
+            <p class="mode-description">First to survive 30 seconds wins the race!</p>
+          </div>
+          <div class="mode-option" data-mode="survival">
+            <div class="mode-header">
+              <span class="mode-icon">💪</span>
+              <span class="mode-name">Survival</span>
+            </div>
+            <p class="mode-description">How long can you survive? Platforms change faster!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Name Entry Screen -->
+    <div id="nameScreen" class="overlay" style="display:none;">
+      <button class="nav-button back-button" onclick="backToModeSelect()">
+        <span class="button-icon">←</span>
+        <span>Back</span>
+      </button>
+      <div class="form-container">
+        <h2 class="screen-title">⭐ Enter Player Names ⭐</h2>
+        <div id="nameInputs">
+          <div class="input-wrapper">
+            <label>🎮 Player 1 Name:</label>
+            <input type="text" id="player1Name" placeholder="Player 1" maxlength="12">
+            <label style="margin-top: 10px;">🎨 Player 1 Color:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="player1Color" value="#ff6b6b" class="color-picker">
+              <span class="color-label">Choose your color</span>
+            </div>
+          </div>
+          <div class="input-wrapper">
+            <label>🎮 Player 2 Name:</label>
+            <input type="text" id="player2Name" placeholder="Player 2" maxlength="12">
+            <label style="margin-top: 10px;">🎨 Player 2 Color:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="player2Color" value="#4ecdc4" class="color-picker">
+              <span class="color-label">Choose your color</span>
+            </div>
+          </div>
+        </div>
+        <button class="cute-button start-btn" onclick="startCountdown()">
+          <span class="button-icon">🚀</span>
+          <span>Start Game</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen">
+      <div class="gameOverContainer">
+        <h2 id="gameOverTitle">🎮 Game Over</h2>
+        <div id="gameOverMessage"></div>
+        <div class="game-over-actions">
+          <p class="action-hint">Press <kbd>R</kbd> to Replay</p>
+          <p class="action-hint">Press <kbd>N</kbd> for New Players</p>
+          <button class="cute-button" onclick="showLeaderboard()" style="margin-top: 10px;">
+            <span class="button-icon">🏆</span>
+            <span>View Leaderboard</span>
+          </button>
+          <button class="cute-button" onclick="goHomeFromGameOver()" style="margin-top: 10px;">
+            <span class="button-icon">🏠</span>
+            <span>Back to Home</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboardScreen" class="overlay" style="display:none;">
+      <div class="leaderboard-container">
+        <h2 class="screen-title">🏆 Leaderboard</h2>
+        <div id="leaderboardList"></div>
+        <div class="leaderboard-actions">
+          <button class="cute-button" onclick="hideLeaderboard()">
+            <span class="button-icon">←</span>
+            <span>Back</span>
+          </button>
+          <button class="cute-button danger-btn" onclick="if(confirm('Clear all high scores?')) { clearLeaderboard(); showLeaderboard(); }">
+            <span class="button-icon">🗑️</span>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements Screen -->
+    <div id="achievementsScreen" class="overlay" style="display:none;">
+      <div class="achievements-container">
+        <h2 class="screen-title">🎖️ Achievements</h2>
+        <div id="achievementsGrid" class="achievements-grid"></div>
+        <div class="leaderboard-actions">
+          <button class="cute-button" onclick="hideAchievements()">
+            <span class="button-icon">←</span>
+            <span>Back</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settingsScreen" class="overlay" style="display:none;">
+      <div class="settings-container">
+        <h2 class="screen-title">⚙️ Settings </h2>
+        <div class="settings-content">
+          <div class="setting-group">
+            <label class="setting-label">
+              <input type="checkbox" id="soundToggle" checked onchange="toggleSound()">
+              <span>Sound Effects</span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <label class="setting-label">
+              <input type="checkbox" id="musicToggle" onchange="toggleMusic()">
+              <span>Background Music</span>
+            </label>
+          </div>
+          <div class="setting-group">
+            <label class="setting-label">Platform Speed:</label>
+            <select id="platformSpeed" onchange="updatePlatformSpeed()">
+              <option value="slow">Slow (10s)</option>
+              <option value="normal" selected>Normal (10s)</option>
+              <option value="fast">Fast (5s)</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <label class="setting-label">Power-up Frequency:</label>
+            <select id="powerupFrequency" onchange="updatePowerupFrequency()">
+              <option value="rare">Rare (10s)</option>
+              <option value="normal" selected>Normal (5s)</option>
+              <option value="common">Common (3s)</option>
+            </select>
+          </div>
+        </div>
+        <button class="cute-button" onclick="hideSettings()">
+          <span class="button-icon">←</span>
+          <span>Back</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right Column: Controls -->
+  <div class="right-column">
+    <button id="pauseBtn" onclick="togglePause()">⏸ Pause (P)</button>
+    
+    <div class="instructions-panel">
+      <h3>🎯 Game Rules</h3>
+      <ul>
+        <li><strong>Blue platforms</strong> are <b style="color: blue;">SAFE</b> - jump on them!</li>
+        <li><strong>Red platforms</strong> are <b style="color: red;"> LAVA</b> - avoid them!</li>
+        <li><b style="color: orange;">Tag the other player</b> to make them "Taya"</li>
+        <li>Platforms change every <b style="color: #0AFF0A;">10 seconds</b></li>
+        <li>Survive the longest to win!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Achievement Notification -->
+<div id="achievementNotification" class="achievement-notification">
+  <div id="achievementIcon">🏆</div>
+  <div class="achievement-text">
+    <div id="achievementName">Achievement Unlocked!</div>
+    <div id="achievementDesc">Description here</div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
